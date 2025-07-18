@@ -16,8 +16,7 @@ bootstrap();
 
 // TODO: Config
 // TODO: Faire les test par controller
-// TODO: Route create workflow
-// TODO: Route run workflow
 
 // TODO: front : 1 une page sign up, sign in, admin page, user page
 // TODO: front jwt token dans le local storage
+// TODO: Front rendre visible les étapes du workflow, changer l'input pour recommancer un workflow
