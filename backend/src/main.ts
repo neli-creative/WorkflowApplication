@@ -21,3 +21,9 @@ bootstrap();
 
 // TODO: front : 1 une page sign up, sign in, admin page, user page
 // TODO: front jwt token dans le local storage
+
+// 2 installer le front avec hero ui
+// 3 page authentification connexion
+// 4 page création de compte
+// 5 page admin import de fichier json + mise en page
+// 6 page user input + resultat
