@@ -8,6 +8,14 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { AuthService } from '../auth.service';
+import { JwtPayload, UserInRequest } from '../types/auth.types';
+
+declare module 'express' {
+  interface Request {
+    user?: UserInRequest;
+    userId?: string;
+  }
+}
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -17,7 +25,7 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<Request>();
     const token = this.extractTokenFromHeader(request);
     console.log('Token reçu:', token);
 
@@ -26,7 +34,7 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      const payload = this.jwtService.verify(token);
+      const payload = this.jwtService.verify<JwtPayload>(token);
 
       const user = await this.authService.findUserById(payload.userId);
 
@@ -44,7 +52,7 @@ export class AuthGuard implements CanActivate {
 
       request.userId = payload.userId;
     } catch (e) {
-      Logger.error(e.message);
+      Logger.error((e as Error).message);
       throw new UnauthorizedException('Invalid token');
     }
 

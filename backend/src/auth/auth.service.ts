@@ -47,7 +47,7 @@ export class AuthService {
       password: hashedPassword,
       firstName,
       lastName,
-      role,
+      role: role.toUpperCase(),
     });
   }
 
@@ -101,8 +101,10 @@ export class AuthService {
     userId: string,
     role: Role,
   ): Promise<{ access_token: string; refreshToken: string }> {
+    const normalizedRole = role.toUpperCase() as Role;
+
     const access_token = this.jwtService.sign(
-      { userId, role },
+      { userId, role: normalizedRole },
       { expiresIn: '1h' },
     );
 
