@@ -9,9 +9,9 @@ import SignUpPage from "@/pages/signup";
 import LoginPage from "@/pages/login";
 
 // TODO: i18n
-// TODO: ajouter des index.tsx dans les dossiers pour les imports
 // TODO: typer tous les retours de fonctions
-// TODO: responsive design
+// TODO: clean
+
 function App(): JSX.Element {
   return (
     <Routes>

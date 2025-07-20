@@ -105,7 +105,7 @@ export class AuthService {
 
     const access_token = this.jwtService.sign(
       { userId, role: normalizedRole },
-      { expiresIn: '1h' },
+      { expiresIn: '3m' },
     );
 
     const refreshToken = uuidv4();

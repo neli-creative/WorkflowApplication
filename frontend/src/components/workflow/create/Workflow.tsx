@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Spinner } from "@heroui/spinner";
 import { Plus } from "lucide-react";
 
@@ -16,60 +16,89 @@ import { useWorkflowData } from "@/hooks/useWorkflowData";
 import { useWorkflowZoom } from "@/hooks/useWorkflowZoom";
 import { CustomAlert } from "@/ui/CustomAlert";
 import { ImportButton } from "@/ui/ImportJsonButton";
+import { useCreateWorkflow } from "@/hooks/useCreateWorkflow";
+import { useGetWorkflow } from "@/hooks/useGetWorkflow";
 
-interface WorkflowProps {}
+//TODO:
+// Types locaux
+interface AlertState {
+  color: "success" | "danger";
+  title: string;
+}
 
-export const Workflow: React.FC<WorkflowProps> = ({}) => {
+export const Workflow: React.FC = () => {
+  // Refs
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [selectedNode, setSelectedNode] = useState<NodeType | null>(null);
-  const [alert, setAlert] = useState<{
-    color: "success" | "danger";
-    title: string;
-  } | null>(null);
 
-  const { nodes, edges, isLoading, isInitialized } = useWorkflowData();
+  // States
+  const [selectedNode, setSelectedNode] = useState<NodeType | null>(null);
+  const [alert, setAlert] = useState<AlertState | null>(null);
+  const [currentWorkflowData, setCurrentWorkflowData] = useState<any>(null);
+
+  // Hooks
+  const {
+    workflow: existingWorkflow,
+    loading: loadingExistingWorkflow,
+    refetch: refetchWorkflow,
+  } = useGetWorkflow();
+  const {
+    createWorkflow,
+    loading: creatingWorkflow,
+    error: createError,
+    timedOut: createTimedOut,
+  } = useCreateWorkflow();
+  const { nodes, edges, isLoading, isInitialized } = useWorkflowData({
+    workflowData: currentWorkflowData,
+  });
   const transform = useWorkflowZoom(svgRef, containerRef, nodes);
 
-  const handleNodeClick = (node: NodeType) => {
-    setSelectedNode(node);
-  };
-
-  const handleImportWorkflow = (jsonData: any) => {
-    try {
-      console.log("Données de workflow importées:", jsonData);
-
-      // TODO: updateWorkflowData(jsonData);
-
-      setAlert({
-        color: "success",
-        title: "Document importé avec succès",
-      });
-    } catch (error) {
-      setAlert({
-        color: "danger",
-        title: "Une erreur s'est produite lors de l'importation du document",
-      });
+  // Effects
+  useEffect(() => {
+    if (existingWorkflow) {
+      setCurrentWorkflowData(existingWorkflow);
     }
+  }, [existingWorkflow]);
 
+  // Handlers
+  const handleNodeClick = (node: NodeType) => setSelectedNode(node);
+
+  const showAlert = (color: AlertState["color"], title: string) => {
+    setAlert({ color, title });
     setTimeout(() => setAlert(null), 5000);
   };
 
-  // Validation spécifique pour les fichiers de workflow
+  const handleImportWorkflow = async (jsonData: any) => {
+    try {
+      await createWorkflow(jsonData);
+      setCurrentWorkflowData(jsonData);
+      await refetchWorkflow();
+
+      showAlert("success", "Workflow créé avec succès sur le serveur");
+    } catch (error) {
+      const errorTitle = createTimedOut
+        ? "La requête a expiré. Veuillez réessayer."
+        : createError
+          ? `Erreur serveur: ${createError}`
+          : "Une erreur s'est produite lors de l'importation du document";
+
+      showAlert("danger", errorTitle);
+    }
+  };
+
+  // Validation des fichiers
   const validateWorkflowFile = (file: File): boolean => {
     return file.type === "application/json";
   };
 
-  // Parsing spécifique pour les workflows avec validation
   const parseWorkflowFile = (content: string): any => {
     const data = JSON.parse(content);
 
-    // Validation basique de la structure du workflow
+    // Validations
     if (!data.nodes || !Array.isArray(data.nodes)) {
       throw new Error("Le fichier doit contenir un tableau 'nodes'");
     }
 
-    // Validation des nœuds
     data.nodes.forEach((node: any, index: number) => {
       if (!node.id || !node.prompt) {
         throw new Error(
@@ -78,15 +107,63 @@ export const Workflow: React.FC<WorkflowProps> = ({}) => {
       }
     });
 
+    const hasStartNode = data.nodes.some((node: any) => node.id === "start");
+    if (!hasStartNode) {
+      throw new Error("Le workflow doit contenir un nœud avec l'id 'start'");
+    }
+
     return data;
   };
 
-  if (isLoading) {
-    return (
-      <div className="w-full h-screen bg-gray-50 flex items-center justify-center">
-        <Spinner variant="default" />
+  // Composants conditionnels
+  const LoadingSpinner = () => (
+    <div className="w-full h-screen bg-gray-50 flex items-center justify-center">
+      <Spinner color="default" />
+    </div>
+  );
+
+  const EmptyState = () => (
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="text-center text-gray-500">
+        <Plus className="mx-auto mb-4 opacity-50" size={48} />
+        <p className="text-lg font-medium">Aucun workflow créé</p>
+        <p className="text-sm">Importez un fichier JSON pour commencer</p>
       </div>
-    );
+    </div>
+  );
+
+  const WorkflowContent = () => (
+    <>
+      <EdgeRenderer
+        edges={edges}
+        nodes={nodes}
+        svgRef={svgRef}
+        transform={transform}
+      />
+      <Nodes
+        handleNodeClick={handleNodeClick}
+        nodes={nodes}
+        transform={transform}
+      />
+    </>
+  );
+
+  // Calculs dérivés
+  const isLoadingTest =
+    loadingExistingWorkflow || creatingWorkflow || isLoading;
+  const hasWorkflowData = !!currentWorkflowData;
+  const buttonText = creatingWorkflow
+    ? "Création..."
+    : hasWorkflowData
+      ? "Remplacer le workflow"
+      : "Créer un nouveau workflow";
+  const modalTitle = hasWorkflowData
+    ? "Remplacer le workflow existant"
+    : "Créer un nouveau workflow";
+
+  // Render
+  if (isLoadingTest) {
+    return <LoadingSpinner />;
   }
 
   return (
@@ -97,10 +174,11 @@ export const Workflow: React.FC<WorkflowProps> = ({}) => {
       <ImportButton
         acceptedFileTypes=".json"
         buttonIcon={<Plus size={18} />}
-        buttonText="Créer un nouveau workflow"
-        importButtonText="Importer"
+        buttonText={buttonText}
+        importButtonText={creatingWorkflow ? "Création..." : "Importer"}
+        isLoading={creatingWorkflow}
         modalContent={<WorkflowImportModalContent />}
-        modalTitle="Créer un nouveau workflow"
+        modalTitle={modalTitle}
         parseFile={parseWorkflowFile}
         validateFileType={validateWorkflowFile}
         onImport={handleImportWorkflow}
@@ -108,22 +186,7 @@ export const Workflow: React.FC<WorkflowProps> = ({}) => {
 
       <Arrows svgRef={svgRef} />
 
-      {isInitialized && (
-        <>
-          <EdgeRenderer
-            edges={edges}
-            nodes={nodes}
-            svgRef={svgRef}
-            transform={transform}
-          />
-
-          <Nodes
-            handleNodeClick={handleNodeClick}
-            nodes={nodes}
-            transform={transform}
-          />
-        </>
-      )}
+      {!hasWorkflowData ? <EmptyState /> : isInitialized && <WorkflowContent />}
 
       {selectedNode && (
         <CustomModal

@@ -20,7 +20,7 @@ import {
     ]),
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'secret_key',
-      signOptions: { expiresIn: '1h' },
+      signOptions: { expiresIn: '3m' },
     }),
   ],
   controllers: [AuthController],

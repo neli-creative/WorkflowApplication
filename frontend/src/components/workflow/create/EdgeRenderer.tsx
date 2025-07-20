@@ -5,7 +5,7 @@ import { NodeType } from "./Node/node.type";
 import { WorkflowEdge } from "./workflow.types";
 import { ARROW_CONFIG, EDGE_COLORS, NODE_HEIGHT } from "./workflow.constants";
 
-// TODO: passer en hook
+// TODO:
 interface EdgeRendererProps {
   svgRef: React.RefObject<SVGSVGElement>;
   nodes: NodeType[];

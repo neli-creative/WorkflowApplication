@@ -40,7 +40,7 @@ export function ProtectedRoute({
     return (
       <div className="w-full min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-10">
         <div className="text-center">
-          <Spinner variant="default" />
+          <Spinner color="default" />
         </div>
       </div>
     );

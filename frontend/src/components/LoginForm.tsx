@@ -35,7 +35,7 @@ export function LoginForm() {
   };
 
   return (
-    <div className="w-1/2 flex flex-col items-center justify-center p-30">
+    <div className="w-full sm:w-1/2 flex flex-col items-center justify-center p-10 sm:p-30">
       <div className="text-left mb-12 w-full">
         <h2 className="text-gray-900 text-4xl font-semibold mb-4">
           Se connecter

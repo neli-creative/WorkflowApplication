@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpException,
   HttpStatus,
@@ -32,6 +33,19 @@ export class WorkflowController {
   async runWorkflow(@Body() runWorkflowDto: RunWorkflowDto) {
     try {
       return await this.workflowService.runWorkflow(runWorkflowDto);
+    } catch (error) {
+      throw new HttpException(
+        error.message,
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Get()
+  @Roles(Role.ADMIN, Role.USER)
+  async getWorkflow() {
+    try {
+      return await this.workflowService.getWorkflow();
     } catch (error) {
       throw new HttpException(
         error.message,

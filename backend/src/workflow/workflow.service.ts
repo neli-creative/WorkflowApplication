@@ -131,10 +131,6 @@ export class WorkflowService {
     let lastOutput = '';
     const visitedNodes = new Set<string>();
 
-    console.log('Starting workflow with input:', input);
-    console.log('Initial start node:', currentNode);
-    console.log('Visited nodes:', visitedNodes);
-
     while (currentNode) {
       if (visitedNodes.has(currentNode.id)) {
         throw new BadRequestException(
@@ -208,11 +204,14 @@ export class WorkflowService {
 
   private async callOpenAI(prompt: string): Promise<string> {
     const response = await axios.post<OpenAIResponse>(
-      'https://api.openai.com/v1/chat/completions',
+      process.env.OPEN_API_URL || 'https://api.openai.com/v1/chat/completions',
       {
         model: 'gpt-4.1',
         messages: [
-          { role: 'system', content: 'Executes user prompts' },
+          {
+            role: 'system',
+            content: process.env.IA_PROMPT || 'You are a helpful assistant.',
+          },
           { role: 'user', content: prompt },
         ],
       },
@@ -224,5 +223,15 @@ export class WorkflowService {
       },
     );
     return response.data.choices[0].message.content.trim();
+  }
+
+  async getWorkflow(): Promise<Workflow> {
+    const workflow = await this.workflowModel.findOne().sort({ createdAt: -1 });
+
+    if (!workflow) {
+      throw new BadRequestException('No workflow found');
+    }
+
+    return workflow;
   }
 }

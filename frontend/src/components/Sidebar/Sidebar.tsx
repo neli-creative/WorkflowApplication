@@ -11,6 +11,8 @@ import { NAV_ITEMS } from "./sidebar.constants";
 import { NavItem } from "@/components/NavItem";
 import { useAuth } from "@/hooks/useAuth";
 
+//TODO:
+
 export const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeItem, setActiveItem] = useState("/");

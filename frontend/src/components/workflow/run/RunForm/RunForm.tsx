@@ -3,6 +3,7 @@ import { Send } from "lucide-react";
 import { Form } from "@heroui/form";
 import { Textarea } from "@heroui/input";
 import { Button } from "@heroui/button";
+import { Spinner } from "@heroui/spinner";
 
 import { FORM_PROMPT } from "./runForm.constants";
 
@@ -10,12 +11,14 @@ interface RunFormProps {
   handleSubmit: (e: React.FormEvent) => void;
   query: string;
   setQuery: React.Dispatch<React.SetStateAction<string>>;
+  isLoading: boolean;
 }
 
 export const RunForm: FC<RunFormProps> = ({
   handleSubmit,
   query,
   setQuery,
+  isLoading,
 }) => {
   return (
     <Form
@@ -48,7 +51,11 @@ export const RunForm: FC<RunFormProps> = ({
           isDisabled={!query.trim()}
           type="submit"
         >
-          <Send className="w-4 h-4 text-white" />
+          {isLoading ? (
+            <Spinner className="p-2" color="default" size="sm" />
+          ) : (
+            <Send className="w-4 h-4 text-white" />
+          )}
         </Button>
       </div>
     </Form>

@@ -6,7 +6,7 @@ export const RunTitle: FC = () => {
   const { user } = useAuth();
 
   return (
-    <div className="text-center mb-12">
+    <div className="text-center my-[25%]">
       <h1 className="text-gray-600 text-2xl mb-2">
         Bienvenue {user?.firstName || ""} 👋
       </h1>

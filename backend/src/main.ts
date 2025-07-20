@@ -5,7 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:5173'],
+    origin: [process.env.API_URL, process.env.APP_URL],
     credentials: true,
   });
 
@@ -19,10 +19,6 @@ async function bootstrap() {
 }
 void bootstrap();
 
-// TODO: Config
-// TODO: Faire les test par controller
+// TODO: Faire les test par controller er services
 
-// TODO: intéger la route de création de workflow dans le front avec gestion des erreurs
-// TODO: integer la route de run workflow dans le front avec gestion des erreurs
-
-// TODO: read me gloab et pas front et back
+// TODO: read me gloab et pas front et back et fair eune passe sur les chose qui peuvent etre améliorée

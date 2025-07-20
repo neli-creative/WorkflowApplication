@@ -5,8 +5,8 @@ import {
   SignupCredentials,
 } from "./authServices.types";
 
+// TODO:
 const apiUrl = import.meta.env.VITE_API_URL;
-console.log("API URL:", apiUrl);
 
 class AuthService {
   private readonly baseURL = apiUrl;
@@ -170,19 +170,23 @@ class AuthService {
       if (response.status === 401) {
         try {
           await this.refreshTokens();
-          accessToken = this.getAccessToken();
+          const newAccessToken = this.getAccessToken();
+
+          if (!newAccessToken) {
+            throw new Error("Impossible de récupérer le nouveau token");
+          }
 
           return fetch(url, {
             ...requestOptions,
             headers: {
               ...requestOptions.headers,
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${newAccessToken}`,
             },
           });
         } catch (refreshError) {
           this.logout();
           window.location.href = "/login";
-          throw new Error("Session expirée" + refreshError);
+          throw new Error("Session expirée: " + refreshError);
         }
       }
 
