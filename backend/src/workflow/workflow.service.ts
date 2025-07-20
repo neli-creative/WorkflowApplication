@@ -154,7 +154,6 @@ export class WorkflowService {
       const aiResponse = await this.callOpenAI(prompt);
       lastOutput = aiResponse;
 
-      //  TODO: Si le nœud est terminal, on exécute et on restart
       if (!currentNode.next && !currentNode.condition) {
         const startNode = nodes.find((n) => n.id === 'start');
         if (!startNode) {
@@ -169,7 +168,8 @@ export class WorkflowService {
             `Unexpected condition output "${lastOutput}" at node ${currentNode.id}`,
           );
         }
-        const nextNode = nodes.find((n) => n.id === nextId);
+        const nextNode: WorkflowNode | null =
+          nodes.find((n) => n.id === nextId) ?? null;
         if (!nextNode) {
           throw new BadRequestException(`Node with id "${nextId}" not found`);
         }
