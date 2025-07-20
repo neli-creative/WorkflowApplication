@@ -1,7 +1,6 @@
 import Run from "@/components/workflow/run/Run";
-import { Sidebar } from "@/ui/Sidebar/Sidebar";
+import { Sidebar } from "@/components/Sidebar/Sidebar";
 
-// TODO: get user
 export default function IndexPage() {
   return (
     <div className="flex h-screen flex-row">

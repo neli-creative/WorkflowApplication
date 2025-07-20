@@ -1,7 +1,6 @@
 import { LoginForm } from "@/components/LoginForm";
 
 export default function LoginPage() {
-  // TODO: image
   return (
     <div className="flex h-screen w-full flex-row">
       <img

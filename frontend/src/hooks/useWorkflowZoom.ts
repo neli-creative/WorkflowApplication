@@ -3,11 +3,12 @@ import * as d3 from "d3";
 
 import { ZOOM_CONFIG } from "@/components/workflow/create/workflow.constants";
 import { Transform } from "@/components/workflow/create/workflow.types";
+import { NodeType } from "@/components/workflow/create/Node/node.type";
 
 export const useWorkflowZoom = (
   svgRef: React.RefObject<SVGSVGElement>,
   containerRef: React.RefObject<HTMLDivElement>,
-  nodes: any[]
+  nodes: NodeType[]
 ) => {
   const [transform, setTransform] = useState<Transform>({ x: 0, y: 0, k: 1 });
   const [isInitialized, setIsInitialized] = useState(false);
@@ -17,7 +18,6 @@ export const useWorkflowZoom = (
 
     const svg = d3.select(svgRef.current);
 
-    // Configuration du zoom
     const zoom = d3
       .zoom<SVGSVGElement, unknown>()
       .scaleExtent(ZOOM_CONFIG.scaleExtent)
@@ -26,20 +26,17 @@ export const useWorkflowZoom = (
 
         setTransform(transform);
 
-        // Mettre à jour la transformation des edges en temps réel
         svg.select(".edges").attr("transform", transform);
       });
 
     svg.call(zoom);
 
-    // Initialisation différée pour éviter les problèmes de timing
     const initializeView = () => {
       if (!containerRef.current) return;
 
       const containerWidth = containerRef.current.clientWidth;
       const containerHeight = containerRef.current.clientHeight;
 
-      // Calculer les dimensions du contenu basées sur les positions des nœuds
       if (nodes.length > 0) {
         const xPositions = nodes.map((node) => node.x || 0);
         const yPositions = nodes.map((node) => node.y || 0);
@@ -72,7 +69,6 @@ export const useWorkflowZoom = (
       }
     };
 
-    // Utiliser un délai plus long pour s'assurer que tout est rendu
     const timer = setTimeout(initializeView, 150);
 
     return () => {
@@ -81,6 +77,5 @@ export const useWorkflowZoom = (
     };
   }, [svgRef, containerRef, nodes]);
 
-  // Retourner également l'état d'initialisation
   return { ...transform, isInitialized };
 };

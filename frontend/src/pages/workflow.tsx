@@ -1,5 +1,5 @@
 import { Workflow } from "@/components/workflow/create/Workflow";
-import { Sidebar } from "@/ui/Sidebar/Sidebar";
+import { Sidebar } from "@/components/Sidebar/Sidebar";
 
 // TODO: menu responsive
 export default function WorkflowPage() {

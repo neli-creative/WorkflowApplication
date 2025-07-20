@@ -1,4 +1,4 @@
-import { NodeType } from "@/components/workflow/Node/node.type";
+import { NodeType } from "@/components/workflow/create/Node/node.type";
 import {
   LEVEL_SPACING,
   NODE_HEIGHT,
@@ -11,7 +11,6 @@ export const calculateLayout = (
   nodes: NodeType[],
   edges: WorkflowEdge[]
 ): NodeType[] => {
-  // Créer un graphe de dépendances
   const nodeMap = new Map<string, NodeType>();
   const incomingEdges = new Map<string, WorkflowEdge[]>();
   const outgoingEdges = new Map<string, WorkflowEdge[]>();
@@ -27,12 +26,10 @@ export const calculateLayout = (
     outgoingEdges.get(edge.source)?.push(edge);
   });
 
-  // Trouver le nœud racine (sans incoming edges)
   const rootNodes = nodes.filter(
     (node) => incomingEdges.get(node.id)?.length === 0
   );
 
-  // Calculer les niveaux
   const levels = new Map<string, number>();
   const visited = new Set<string>();
 
@@ -55,7 +52,6 @@ export const calculateLayout = (
 
   rootNodes.forEach((node) => calculateLevel(node.id));
 
-  // Grouper par niveaux
   const levelGroups = new Map<number, NodeType[]>();
 
   nodes.forEach((node) => {
@@ -67,7 +63,6 @@ export const calculateLayout = (
     levelGroups.get(level)?.push(node);
   });
 
-  // Positionner les nœuds
   const positionedNodes: NodeType[] = [];
 
   levelGroups.forEach((levelNodes, level) => {

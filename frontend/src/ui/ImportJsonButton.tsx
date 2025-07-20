@@ -2,8 +2,6 @@ import { Button } from "@heroui/button";
 import { Upload, Plus } from "lucide-react";
 import { FC, useState, useRef, ReactNode } from "react";
 
-import { CustomAlert } from "./CustomAlert";
-
 import { CustomModal } from "@/ui/CustomModal";
 
 interface ImportButtonProps {
@@ -48,8 +46,6 @@ export const ImportButton: FC<ImportButtonProps> = ({
     if (!file) return;
 
     if (!validateFileType(file)) {
-      console.error("Type de fichier non valide");
-
       return;
     }
 
@@ -63,7 +59,7 @@ export const ImportButton: FC<ImportButtonProps> = ({
         onImport(data);
         setIsModalOpen(false);
       } catch (error) {
-        console.error("Erreur lors du parsing du fichier:", error);
+        throw new Error("Erreur lors de l'importation du fichier: " + error);
       }
     };
     reader.readAsText(file);

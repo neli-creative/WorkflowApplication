@@ -1,36 +1,38 @@
-import { Menu, ChevronLeft } from "lucide-react";
+import { Menu, ChevronLeft, CircleUserRound } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@heroui/button";
 import { Avatar } from "@heroui/avatar";
 
-import { LogoutButton } from "../LogoutButton";
-import { UserSection } from "../UserSection";
+import { LogoutButton } from "../../ui/LogoutButton";
+import { UserSection } from "../../ui/UserSection";
 
 import { NAV_ITEMS } from "./sidebar.constants";
 
 import { NavItem } from "@/components/NavItem";
-
-// TODO: gérer l'accessibilité des users
+import { useAuth } from "@/hooks/useAuth";
 
 export const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeItem, setActiveItem] = useState("/");
 
-  const user = {
-    firstName: "Jean",
-    lastName: "Dupont",
-    email: "jean.dupont@example.com",
-    avatarUrl: "",
-  };
-
-  // TODO: logique de déconnexion
-  const handleLogout = () => {
-    console.log("Déconnexion");
-  };
+  const { user } = useAuth();
 
   const handleExpandToggle = (): void => {
     setIsExpanded((prev) => !prev);
   };
+
+  const getFilteredNavItems = () => {
+    if (!user || !user.role) return [];
+
+    return NAV_ITEMS.filter(
+      (item) =>
+        item.role &&
+        Array.isArray(item.role) &&
+        item.role.includes(user.role as "admin" | "user")
+    );
+  };
+
+  const filteredNavItems = getFilteredNavItems();
 
   return (
     <div
@@ -61,7 +63,7 @@ export const Sidebar = () => {
       </div>
 
       <div className="flex-1 px-4 py-2 space-y-3 relative">
-        {NAV_ITEMS.map((item) => (
+        {filteredNavItems.map((item) => (
           <NavItem
             key={item.href}
             activeItem={activeItem}
@@ -75,22 +77,18 @@ export const Sidebar = () => {
       <div className="relative border-t border-gray-200/40 bg-gradient-to-t from-gray-50/50 to-transparent">
         <div className="p-5">
           {isExpanded ? (
-            <UserSection
-              handleLogout={handleLogout}
-              isExpanded={isExpanded}
-              user={user}
-            />
+            <UserSection isExpanded={isExpanded} user={user} />
           ) : (
             <div className="flex flex-col items-center gap-4">
               <div className="group relative">
                 <Avatar
-                  className="ring-2 ring-gray-200/60 cursor-pointer hover:ring-blue-200/80 transition-all duration-300 bg-gradient-to-br from-blue-100 to-rose-100 hover:scale-105"
-                  name={user.firstName}
+                  className="ring-2 ring-gray-200/60 bg-gradient-to-br from-blue-100 to-rose-100 "
+                  icon={<CircleUserRound />}
                   size="md"
                 />
               </div>
 
-              <LogoutButton handleLogout={handleLogout} />
+              <LogoutButton />
             </div>
           )}
         </div>

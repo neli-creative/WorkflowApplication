@@ -3,21 +3,35 @@ import { Form } from "@heroui/form";
 import { Input } from "@heroui/input";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-// TODO: logique + optiliser le compsoiant
+import { authService } from "@/services/authServices/authServices";
+
 export function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  // Gestionnaire de soumission avec gestion des erreurs
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({
-      email,
-      password,
-    });
+    setError("");
+    setIsLoading(true);
+
+    try {
+      await authService.login({
+        email,
+        password,
+      });
+      navigate("/");
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Erreur de connexion");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -33,9 +47,16 @@ export function LoginForm() {
 
       <Form className="relative w-full" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-5 backdrop-blur-sm transition-all duration-200 w-full">
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+              {error}
+            </div>
+          )}
+
           <Input
             isRequired
             className="flex-1"
+            isDisabled={isLoading}
             label="Email"
             name="email"
             placeholder="Entrer votre email"
@@ -57,6 +78,7 @@ export function LoginForm() {
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             }
+            isDisabled={isLoading}
             label="Mot de passe"
             name="password"
             placeholder="Entrer votre mot de passe"
@@ -67,9 +89,11 @@ export function LoginForm() {
 
           <Button
             className="p-2 mt-5 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-300 rounded-lg transition-colors duration-200 disabled:cursor-not-allowed min-w-10 h-13 text-white"
+            isDisabled={isLoading}
+            isLoading={isLoading}
             type="submit"
           >
-            S’inscrire
+            {isLoading ? "Connexion..." : "Se connecter"}
           </Button>
         </div>
       </Form>

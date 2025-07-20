@@ -20,7 +20,6 @@ export const Node: FC<NodeProps> = ({ node, onClick }) => {
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    // Gérer les touches Entrée et Espace pour activer le clic
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       handleClick();

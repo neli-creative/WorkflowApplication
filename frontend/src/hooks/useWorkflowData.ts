@@ -22,13 +22,12 @@ export const useWorkflowData = () => {
       setNodes(layoutedNodes);
       setEdges(transformedEdges);
     } catch (error) {
-      console.error("Erreur lors du chargement des données:", error);
+      throw error;
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  // Gestion de l'initialisation avec délai
   useEffect(() => {
     if (!isLoading && nodes.length > 0 && edges.length > 0) {
       const timer = setTimeout(() => {

@@ -19,3 +19,9 @@ export const QUICK_PROMPTS = [
     description: "Répondre de manière professionnelle à un refus d’offre",
   },
 ];
+
+export const FORM_PROMPT = {
+  placeholder:
+    "Décrivez ici le contenu de votre email, dans n’importe quelle langue...",
+  icon: "🔗",
+};

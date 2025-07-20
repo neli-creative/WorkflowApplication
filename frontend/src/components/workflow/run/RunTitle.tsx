@@ -1,13 +1,14 @@
 import { FC } from "react";
 
-interface RunTitleProps {
-  firstName?: string;
-}
-export const RunTitle: FC<RunTitleProps> = ({ firstName }) => {
+import { useAuth } from "@/hooks/useAuth";
+
+export const RunTitle: FC = () => {
+  const { user } = useAuth();
+
   return (
     <div className="text-center mb-12">
       <h1 className="text-gray-600 text-2xl mb-2">
-        Bienvenue {firstName || ""} 👋
+        Bienvenue {user?.firstName || ""} 👋
       </h1>
       <h2 className="text-gray-900 text-5xl font-semibold mb-4">
         Améliorez vos emails en un clic

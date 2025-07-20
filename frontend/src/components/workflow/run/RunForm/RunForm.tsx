@@ -4,6 +4,8 @@ import { Form } from "@heroui/form";
 import { Textarea } from "@heroui/input";
 import { Button } from "@heroui/button";
 
+import { FORM_PROMPT } from "./runForm.constants";
+
 interface RunFormProps {
   handleSubmit: (e: React.FormEvent) => void;
   query: string;
@@ -25,13 +27,13 @@ export const RunForm: FC<RunFormProps> = ({
     >
       <div className="flex items-center gap-3 p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/50 focus-within:border-gray-300/70 focus-within:shadow-md transition-all duration-200 w-full">
         <div className="text-gray-400">
-          <span className="text-lg">🔗</span>
+          <span className="text-lg">{FORM_PROMPT.icon}</span>
         </div>
         <Textarea
           maxRows={10}
           minRows={1}
-          name="emailContent"
-          placeholder="Décrivez ici le contenu de votre email, dans n’importe quelle langue..."
+          name="input"
+          placeholder={FORM_PROMPT.placeholder}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => {

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { MongooseModule } from '@nestjs/mongoose';
+import { JwtModule } from '@nestjs/jwt';
 import { User, UserSchema } from './schemas/user.schema';
 import {
   RefreshToken,
@@ -17,6 +18,10 @@ import {
       },
       { name: RefreshToken.name, schema: RefreshTokenSchema },
     ]),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'secret_key',
+      signOptions: { expiresIn: '1h' },
+    }),
   ],
   controllers: [AuthController],
   providers: [AuthService],

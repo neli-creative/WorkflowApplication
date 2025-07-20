@@ -1,4 +1,4 @@
-import { NodeType } from "@/components/workflow/Node/node.type";
+import { NodeType } from "@/components/workflow/create/Node/node.type";
 import { WorkflowEdge } from "@/components/workflow/create/workflow.types";
 
 export const transformWorkflowData = (
@@ -8,7 +8,6 @@ export const transformWorkflowData = (
   const edges: WorkflowEdge[] = [];
 
   workflowData.forEach((node) => {
-    // Déterminer le type de nœud
     let nodeType: NodeType["type"] = "action";
 
     if (node.id === "start" || node.condition) {
@@ -24,7 +23,6 @@ export const transformWorkflowData = (
       condition: node.condition ? node.condition : undefined,
     });
 
-    // Créer les edges
     if (node.condition) {
       Object.entries(node.condition).forEach(([condition, targetId]) => {
         edges.push({

@@ -1,6 +1,5 @@
 import { SignUpForm } from "@/components/SignUpForm";
 
-// TODO: generer l'image
 export default function SignUpPage() {
   return (
     <div className="flex h-screen w-full flex-row">

@@ -9,7 +9,7 @@ export const WorkflowImportModalContent = () => {
   return (
     <div className="bg-gray-50 p-4 rounded-lg">
       <div className="flex items-center gap-2 mb-2">
-        <FileText size={16} className="text-gray-600" />
+        <FileText className="text-gray-600" size={16} />
         <h3 className="font-medium text-gray-800">
           {WORKFLOW_IMPORT_HELP_TEXT.title}
         </h3>
