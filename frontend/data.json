@@ -1,0 +1,26 @@
+{
+  "nodes": [
+    {
+      "id": "start",
+      "prompt": "What is the language of this message? Answer 'french' or 'english'.\nMessage: {{input}}",
+      "condition": {
+        "english": "summarize_en",
+        "french": "translate_to_en"
+      }
+    },
+    {
+      "id": "translate_to_en",
+      "prompt": "Translate this message from French to English:\n{{lastOutput}}",
+      "next": "summarize_en"
+    },
+    {
+      "id": "summarize_en",
+      "prompt": "Summarize the following English message:\n{{lastOutput}}",
+      "next": "reply"
+    },
+    {
+      "id": "reply",
+      "prompt": "Based on the summary, write a short and friendly reply:\n{{lastOutput}}"
+    }
+  ]
+}
