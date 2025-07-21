@@ -1,0 +1,63 @@
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - JWT_SECRET=secret_key
+      - PORT=3000
+      - MONGODB_URI=mongodb+srv://new_magali:49UL1dN43rTPy0r4@cluster0.khvmcqj.mongodb.net/WorkflowApplication
+      - MONGODB_DB=WorkflowApplication
+      - OPENAI_API_KEY=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
+      - API_URL=http://localhost:3000
+      - APP_URL=http://localhost:5173
+      - OPEN_API_URL=https://api.openai.com/v1/chat/completions
+      - IA_PROMPT=You are a helpful workflow assistant that processes emails and text. Respond directly to prompts without explanations or additional comments. Follow instructions precisely, maintain formality in business communications, and ensure responses are concise and suitable for professional contexts. Avoid mentioning that you are an AI.
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - workflow-network
+    depends_on:
+      - mongodb
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:3000
+      - VITE_APP_URL=http://localhost:5173
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - workflow-network
+    depends_on:
+      - backend
+
+  mongodb:
+    image: mongo:7.0
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=WorkflowApplication
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - workflow-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  workflow-network:
+    driver: bridge

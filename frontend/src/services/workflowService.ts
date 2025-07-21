@@ -19,7 +19,7 @@ export interface GetWorkflowResponse {
   updatedAt: string;
 }
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 /**
  * Creates a new workflow on the server.
@@ -44,7 +44,7 @@ export const createWorkflow = async (
   const timeout = setTimeout(() => controller.abort(), 7000);
 
   try {
-    const res = await authService.fetchWithAuth(`${apiUrl}/workflow/create`, {
+    const res = await authService.fetchWithAuth(`${API_URL}/workflow/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -87,7 +87,7 @@ export const getWorkflow = async (): Promise<GetWorkflowResponse | null> => {
   const timeout = setTimeout(() => controller.abort(), 7000);
 
   try {
-    const res = await authService.fetchWithAuth(`${apiUrl}/workflow`, {
+    const res = await authService.fetchWithAuth(`${API_URL}/workflow`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -144,7 +144,7 @@ export const runWorkflow = async (
   const timeout = setTimeout(() => controller.abort(), 30000);
 
   try {
-    const res = await authService.fetchWithAuth(`${apiUrl}/workflow/run`, {
+    const res = await authService.fetchWithAuth(`${API_URL}/workflow/run`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

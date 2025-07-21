@@ -5,7 +5,7 @@ import {
   SignupCredentials,
 } from "./authServices.types";
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 /**
  * Authentication service for managing user authentication and API requests.
@@ -20,7 +20,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
  * All tokens are stored in localStorage and automatically managed for the user.
  */
 class AuthService {
-  private readonly baseURL = apiUrl;
+  private readonly baseURL = API_URL;
 
   /**
    * Stores authentication tokens in localStorage.

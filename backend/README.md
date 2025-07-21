@@ -1,98 +1,156 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# WorkflowApplication Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Une API REST construite avec NestJS pour la gestion et l'exécution de workflows d'amélioration de texte utilisant l'intelligence artificielle OpenAI.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🚀 Fonctionnalités
 
-## Description
+- **Authentification JWT** avec refresh tokens et gestion des rôles
+- **Gestion des workflows** (création, récupération, exécution)
+- **Intégration OpenAI GPT-4** pour le traitement intelligent du texte
+- **Architecture modulaire** avec NestJS et MongoDB
+- **Validation automatique** des données avec class-validator
+- **Gestion des CORS** configurée pour les applications frontend
+- **Tests unitaires** avec Jest
+- **Système de rôles** avec guards d'autorisation
+- **Déploiement Docker** prêt pour la production
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🛠 Technologies
 
-## Project setup
+- **Framework** : NestJS 11.x
+- **Base de données** : MongoDB avec Mongoose 8.x
+- **Authentification** : JWT (@nestjs/jwt)
+- **IA** : OpenAI GPT API via Axios
+- **Validation** : class-validator & class-transformer
+- **Hashing** : bcrypt pour les mots de passe
+- **Tests** : Jest avec Supertest
+- **Config** : @nestjs/config
+- **UUID** : Génération d'identifiants uniques
+- **Containerisation** : Docker & Docker Compose
 
+## 📋 Prérequis
+
+- **Docker** (v20 ou supérieur)
+- **Docker Compose** (v2 ou supérieur)
+- **Clé API OpenAI**
+
+
+## 🔧 Installation avec Docker (Recommandé)
+
+### Démarrage rapide (2 minutes)
+
+1. **Cloner le repository**
 ```bash
-$ npm install
+git clone <repository-url>
+cd WorkflowApplication/backend
 ```
 
-## Compile and run the project
+2. **Configuration de l'environnement**
 
+Créez un fichier `.env` à la racine du projet backend 
+
+
+3. **Démarrage complet avec Docker Compose**
 ```bash
-# development
-$ npm run start
+# Démarrage de tous les services (API + MongoDB)
+docker-compose up -d
 
-# watch mode
-$ npm run start:dev
+# Vérification que tout fonctionne
+docker-compose ps
 
-# production mode
-$ npm run start:prod
 ```
 
-## Run tests
+## 🚀 Commandes Docker disponibles
 
+### Gestion des services
 ```bash
-# unit tests
-$ npm run test
+# Démarrage complet (détaché)
+docker-compose up -d
 
-# e2e tests
-$ npm run test:e2e
+# Démarrage avec logs visibles
+docker-compose up
 
-# test coverage
-$ npm run test:cov
+# Arrêt des services
+docker-compose down
+
+# Redémarrage d'un service spécifique
+docker-compose restart api
+
+# Reconstruction et redémarrage
+docker-compose up --build -d
 ```
 
-## Deployment
+## 📚 Architecture du projet
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+```
+src/
+├── auth/                     # 🔐 Module d'authentification
+│   ├── decorators/          # Décorateurs personnalisés (@User, @Roles)
+│   ├── dtos/                # DTOs pour login/signup
+│   ├── enums/               # Énumérations des rôles
+│   ├── guards/              # Guards d'auth et de rôles
+│   ├── schemas/             # Schémas User et RefreshToken
+│   ├── types/               # Types TypeScript
+│   ├── auth.controller.ts   # Routes /auth/*
+│   ├── auth.service.ts      # Logique métier d'authentification
+│   ├── auth.module.ts       # Configuration du module
+│   └── *.spec.ts           # Tests unitaires
+├── workflow/                # 🔄 Module de gestion des workflows
+│   ├── dtos/                # DTOs pour workflows
+│   │   └── create-workflow.dto.ts
+│   ├── schemas/             # Schéma Workflow MongoDB
+│   ├── workflow.controller.ts # Routes /workflow/*
+│   ├── workflow.service.ts    # Logique métier + intégration OpenAI
+│   ├── workflow.module.ts     # Configuration du module
+│   └── *.spec.ts             # Tests unitaires
+├── config/                  # ⚙️ Configuration
+│   └── config.ts           # Configuration centralisée
+├── app.module.ts            # 🏗️ Module principal
+├── app.controller.ts        # Contrôleur principal avec guards
+├── app.service.ts           # Service principal
+└── main.ts                 # 🚀 Point d'entrée
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## 🔐 Authentification & Autorisation
 
-## Resources
+### Système JWT
+- **Access Token** : Durée de vie de 5 minutes
+- **Refresh Token** : Stocké en base pour renouvellement
+- **Guards** : Protection automatique des routes
+- **Roles** : Système de rôles avec décorateurs
 
-Check out a few resources that may come in handy when working with NestJS:
+### Endpoints d'authentification
+```typescript
+POST /auth/signup    # Inscription d un nouvel utilisateur
+POST /auth/login     # Connexion avec email/password
+POST /auth/refresh   # Renouvellement du token
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
 
-## Support
+## 🔄 API Workflows
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Endpoints disponibles
+```typescript
+POST /workflow/create    # Créer un nouveau workflow
+GET  /workflow          # Récupérer le workflow de l utilisateur
+POST /workflow/run      # Exécuter un workflow avec input utilisateur
+```
 
-## Stay in touch
+## 🤖 Intégration OpenAI
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Configuration
+- **Modèle** : gpt-4.1
+- **Timeout** : 30 secondes pour les requêtes IA
 
-## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## 📖 Documentation API
+
+### Endpoints disponibles
+
+| Méthode | Route | Description | Auth requis |
+|---------|-------|-------------|-------------|
+| POST | `/auth/signup` | Inscription | ❌ |
+| POST | `/auth/login` | Connexion | ❌ |
+| POST | `/auth/refresh` | Refresh token | ❌ |
+| POST | `/workflow/create` | Créer workflow | ✅ |
+| GET | `/workflow` | Récupérer workflow | ✅ |
+| POST | `/workflow/run` | Exécuter workflow | ✅ |
