@@ -35,7 +35,9 @@ export class WorkflowController {
       return await this.workflowService.runWorkflow(runWorkflowDto);
     } catch (error) {
       throw new HttpException(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
         error.message,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
         error.status || HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -48,7 +50,9 @@ export class WorkflowController {
       return await this.workflowService.getWorkflow();
     } catch (error) {
       throw new HttpException(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
         error.message,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
         error.status || HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

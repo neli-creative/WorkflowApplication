@@ -9,7 +9,7 @@ import { WorkflowEdge } from "@/components/workflow/create/workflow.types";
 
 export const calculateLayout = (
   nodes: NodeType[],
-  edges: WorkflowEdge[]
+  edges: WorkflowEdge[],
 ): NodeType[] => {
   const nodeMap = new Map<string, NodeType>();
   const incomingEdges = new Map<string, WorkflowEdge[]>();
@@ -27,7 +27,7 @@ export const calculateLayout = (
   });
 
   const rootNodes = nodes.filter(
-    (node) => incomingEdges.get(node.id)?.length === 0
+    (node) => incomingEdges.get(node.id)?.length === 0,
   );
 
   const levels = new Map<string, number>();

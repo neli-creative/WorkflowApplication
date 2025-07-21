@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Workflow, WorkflowSchema } from './schemas/workflow.schema';
 import { WorkflowService } from './workflow.service';
 import { WorkflowController } from './workflow.controller';
-import { AuthModule } from '../auth/auth.module'; // ✅
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [

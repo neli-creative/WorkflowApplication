@@ -5,7 +5,6 @@ import { NodeType } from "./Node/node.type";
 import { WorkflowEdge } from "./workflow.types";
 import { ARROW_CONFIG, EDGE_COLORS, NODE_HEIGHT } from "./workflow.constants";
 
-// TODO:
 interface EdgeRendererProps {
   svgRef: React.RefObject<SVGSVGElement>;
   nodes: NodeType[];
@@ -22,24 +21,20 @@ export const EdgeRenderer: React.FC<EdgeRendererProps> = ({
   useEffect(() => {
     if (!svgRef.current || nodes.length === 0) return;
 
-    // Délai pour s'assurer que le DOM est rendu
     const renderEdges = () => {
       const svg = d3.select(svgRef.current);
 
-      // Nettoyer les éléments existants
       svg.select(".edges").remove();
       svg.select("defs").remove();
 
-      // Créer le groupe des edges avec la transformation
       const edgeGroup = svg
         .append("g")
         .attr("class", "edges")
         .attr(
           "transform",
-          `translate(${transform.x}, ${transform.y}) scale(${transform.k})`
+          `translate(${transform.x}, ${transform.y}) scale(${transform.k})`,
         );
 
-      // Ajouter les marqueurs de flèches
       const defs = svg.append("defs");
 
       defs
@@ -54,7 +49,6 @@ export const EdgeRenderer: React.FC<EdgeRendererProps> = ({
         .attr("points", ARROW_CONFIG.points)
         .attr("fill", ARROW_CONFIG.fill);
 
-      // Dessiner les edges
       edges.forEach((edge) => {
         const sourceNode = nodes.find((n) => n.id === edge.source);
         const targetNode = nodes.find((n) => n.id === edge.target);
@@ -72,7 +66,6 @@ export const EdgeRenderer: React.FC<EdgeRendererProps> = ({
               ? EDGE_COLORS.condition
               : EDGE_COLORS.normal;
 
-          // Ligne courbe
           const path = d3.path();
           const sourceX = sourceNode.x;
           const sourceY = sourceNode.y + NODE_HEIGHT / 2;
@@ -92,9 +85,7 @@ export const EdgeRenderer: React.FC<EdgeRendererProps> = ({
             .attr("fill", "none")
             .attr("marker-end", `url(#${ARROW_CONFIG.id})`);
 
-          // Label pour les conditions
           if (edge.label) {
-            // Ajouter le background rectangle
             edgeGroup
               .append("rect")
               .attr("x", (sourceX + targetX) / 2 - edge.label.length * 3)
@@ -104,7 +95,6 @@ export const EdgeRenderer: React.FC<EdgeRendererProps> = ({
               .attr("ry", 8)
               .attr("fill", "#fbf9fa");
 
-            // Ajouter le texte par-dessus
             edgeGroup
               .append("text")
               .attr("x", (sourceX + targetX) / 2)
@@ -120,7 +110,6 @@ export const EdgeRenderer: React.FC<EdgeRendererProps> = ({
       });
     };
 
-    // Utiliser requestAnimationFrame pour s'assurer que le DOM est prêt
     const timeoutId = setTimeout(() => {
       requestAnimationFrame(renderEdges);
     }, 0);
@@ -128,7 +117,7 @@ export const EdgeRenderer: React.FC<EdgeRendererProps> = ({
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [svgRef, nodes, edges, transform]); // Ajout de transform dans les dépendances
+  }, [svgRef, nodes, edges, transform]);
 
   return null;
 };

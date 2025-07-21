@@ -2,7 +2,7 @@ import { NodeType } from "@/components/workflow/create/Node/node.type";
 import { WorkflowEdge } from "@/components/workflow/create/workflow.types";
 
 export const transformWorkflowData = (
-  workflowData: NodeType[]
+  workflowData: NodeType[],
 ): { nodes: NodeType[]; edges: WorkflowEdge[] } => {
   const nodes: NodeType[] = [];
   const edges: WorkflowEdge[] = [];

@@ -2,6 +2,8 @@ import { Button } from "@heroui/button";
 import { Upload, Plus } from "lucide-react";
 import { FC, useState, useRef, ReactNode } from "react";
 
+import { processFileImport } from "./importJsonButton.core";
+
 import { CustomModal } from "@/ui/CustomModal";
 
 interface ImportButtonProps {
@@ -15,10 +17,8 @@ interface ImportButtonProps {
   buttonIcon?: ReactNode;
   importButtonText?: string;
   importButtonIcon?: ReactNode;
-  isLoading?: boolean; // Nouveau prop pour gérer l'état de chargement
+  isLoading?: boolean;
 }
-
-// TODO:
 
 export const ImportButton: FC<ImportButtonProps> = ({
   onImport,
@@ -47,42 +47,17 @@ export const ImportButton: FC<ImportButtonProps> = ({
   };
 
   const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    const file = event.target.files?.[0];
+    const processor = processFileImport(event, {
+      validateFileType,
+      parseFile,
+      onImport,
+      setFileError,
+      setIsModalOpen,
+    });
 
-    if (!file) return;
-
-    setFileError(null);
-
-    if (!validateFileType(file)) {
-      setFileError("Type de fichier non valide");
-      return;
-    }
-
-    const reader = new FileReader();
-
-    reader.onload = async (e) => {
-      try {
-        const content = e.target?.result as string;
-        const data = parseFile(content);
-
-        await onImport(data);
-        setIsModalOpen(false);
-      } catch (error: any) {
-        console.error("Erreur lors de l'importation:", error);
-        setFileError(
-          error.message || "Erreur lors de l'importation du fichier"
-        );
-      }
-    };
-
-    reader.onerror = () => {
-      setFileError("Erreur lors de la lecture du fichier");
-    };
-
-    reader.readAsText(file);
-    event.target.value = "";
+    await processor();
   };
 
   const handleCancel = () => {
@@ -95,10 +70,10 @@ export const ImportButton: FC<ImportButtonProps> = ({
       <div className="absolute top-4 right-4 z-50">
         <Button
           className="bg-gradient-to-r from-slate-900 via-gray-800 to-slate-900 text-white shadow-2xl border-slate-700/50"
+          isDisabled={isLoading}
+          isLoading={isLoading}
           startContent={buttonIcon}
           variant="shadow"
-          isLoading={isLoading}
-          isDisabled={isLoading}
           onPress={handleOpenModal}
         >
           {buttonText}
@@ -121,17 +96,17 @@ export const ImportButton: FC<ImportButtonProps> = ({
 
           <div className="flex justify-end gap-3 pt-2">
             <Button
+              isDisabled={isLoading}
               variant="light"
               onPress={handleCancel}
-              isDisabled={isLoading}
             >
               Annuler
             </Button>
             <Button
               className="bg-gradient-to-r from-slate-900 via-gray-800 to-slate-900 text-white shadow-2xl border-slate-700/50"
-              startContent={importButtonIcon}
-              isLoading={isLoading}
               isDisabled={isLoading}
+              isLoading={isLoading}
+              startContent={importButtonIcon}
               onPress={handleImportClick}
             >
               {importButtonText}

@@ -5,11 +5,42 @@ import { ZOOM_CONFIG } from "@/components/workflow/create/workflow.constants";
 import { Transform } from "@/components/workflow/create/workflow.types";
 import { NodeType } from "@/components/workflow/create/Node/node.type";
 
+interface UseWorkflowZoomReturn {
+  x: number;
+  y: number;
+  k: number;
+  isInitialized: boolean;
+}
+
+/**
+ * Custom hook for managing zoom and pan functionality on workflow visualizations.
+ *
+ * This hook provides functionality to:
+ * - Initialize D3 zoom behavior on SVG elements
+ * - Calculate optimal initial zoom level and positioning
+ * - Center workflow content automatically within the container
+ * - Track zoom transform state (position and scale)
+ * - Handle responsive layout adjustments
+ * - Manage zoom constraints and boundaries
+ *
+ * The hook automatically calculates the best initial view to fit all nodes
+ * within the container while maintaining readability and proper spacing.
+ *
+ * @param {React.RefObject<SVGSVGElement>} svgRef - Reference to the SVG element for zoom behavior
+ * @param {React.RefObject<HTMLDivElement>} containerRef - Reference to the container for dimension calculations
+ * @param {NodeType[]} nodes - Array of workflow nodes to calculate optimal positioning
+ *
+ * @returns {Object} An object containing:
+ *   - x: Horizontal translation value
+ *   - y: Vertical translation value
+ *   - k: Scale/zoom level
+ *   - isInitialized: Boolean indicating if zoom view has been properly initialized
+ */
 export const useWorkflowZoom = (
   svgRef: React.RefObject<SVGSVGElement>,
   containerRef: React.RefObject<HTMLDivElement>,
-  nodes: NodeType[]
-) => {
+  nodes: NodeType[],
+): UseWorkflowZoomReturn => {
   const [transform, setTransform] = useState<Transform>({ x: 0, y: 0, k: 1 });
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -18,6 +49,10 @@ export const useWorkflowZoom = (
 
     const svg = d3.select(svgRef.current);
 
+    /**
+     * Configure D3 zoom behavior with scale constraints and event handling.
+     * Updates transform state and applies transformations to edge elements.
+     */
     const zoom = d3
       .zoom<SVGSVGElement, unknown>()
       .scaleExtent(ZOOM_CONFIG.scaleExtent)
@@ -31,6 +66,16 @@ export const useWorkflowZoom = (
 
     svg.call(zoom);
 
+    /**
+     * Calculates and applies the optimal initial view for the workflow.
+     *
+     * This function:
+     * - Determines the bounding box of all workflow nodes
+     * - Calculates the best scale to fit content within container
+     * - Centers the content horizontally and vertically
+     * - Applies padding for visual breathing room
+     * - Sets the initial transform with smooth transition
+     */
     const initializeView = () => {
       if (!containerRef.current) return;
 
@@ -41,9 +86,9 @@ export const useWorkflowZoom = (
         const xPositions = nodes.map((node) => node.x || 0);
         const yPositions = nodes.map((node) => node.y || 0);
 
-        const minX = Math.min(...xPositions) - 140; // NODE_WIDTH/2
+        const minX = Math.min(...xPositions) - 140;
         const maxX = Math.max(...xPositions) + 140;
-        const minY = Math.min(...yPositions) - 60; // NODE_HEIGHT/2
+        const minY = Math.min(...yPositions) - 60;
         const maxY = Math.max(...yPositions) + 60;
 
         const contentWidth = maxX - minX;
@@ -52,7 +97,7 @@ export const useWorkflowZoom = (
         const scale = Math.min(
           containerWidth / (contentWidth + ZOOM_CONFIG.padding),
           containerHeight / (contentHeight + ZOOM_CONFIG.padding),
-          1
+          1,
         );
 
         const centerX = containerWidth / 2 - (minX + contentWidth / 2) * scale;

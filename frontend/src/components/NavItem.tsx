@@ -5,7 +5,7 @@ import { Link } from "@heroui/link";
 interface NavItemProps {
   item: NavItem;
   activeItem: string;
-  setActiveItem: React.Dispatch<React.SetStateAction<string>>;
+  setActiveItem: (href: string) => void;
   isExpanded: boolean;
 }
 

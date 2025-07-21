@@ -25,7 +25,7 @@ export function ProtectedRoute({
 
   const hasRequiredRole = (
     userRole: string,
-    required: string | string[]
+    required: string | string[],
   ): boolean => {
     if (!required) return true;
 

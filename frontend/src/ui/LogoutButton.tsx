@@ -15,9 +15,9 @@ export const LogoutButton: FC<LogoutButtonProps> = ({ isExpanded }) => {
     try {
       setIsLoggingOut(true);
       authService.logout();
-    } catch (error) {
+    } catch {
       authService.logout();
-      throw new Error("Erreur lors de la déconnexion: " + error);
+      throw new Error("Erreur lors de la déconnexion: ");
     } finally {
       setIsLoggingOut(false);
     }

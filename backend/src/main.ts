@@ -18,7 +18,3 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3000);
 }
 void bootstrap();
-
-// TODO: Faire les test par controller er services
-
-// TODO: read me gloab et pas front et back et fair eune passe sur les chose qui peuvent etre améliorée

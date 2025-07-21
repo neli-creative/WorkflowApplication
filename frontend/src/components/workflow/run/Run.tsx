@@ -46,11 +46,7 @@ export default function Run() {
           />
         </div>
       </div>
-      {error && (
-        <CustomAlert
-          alert={{ color: "danger", title: "Une erreur est survenue" }}
-        />
-      )}
+      {error && <CustomAlert alert={{ color: "danger", title: error }} />}
     </div>
   );
 }

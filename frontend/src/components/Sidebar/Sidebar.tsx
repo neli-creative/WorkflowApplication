@@ -10,12 +10,12 @@ import { NAV_ITEMS } from "./sidebar.constants";
 
 import { NavItem } from "@/components/NavItem";
 import { useAuth } from "@/hooks/useAuth";
-
-//TODO:
+import { useActiveItem } from "@/hooks/useActiveItem";
 
 export const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [activeItem, setActiveItem] = useState("/");
+
+  const { activeItem, setActiveItem } = useActiveItem();
 
   const { user } = useAuth();
 
@@ -30,7 +30,7 @@ export const Sidebar = () => {
       (item) =>
         item.role &&
         Array.isArray(item.role) &&
-        item.role.includes(user.role as "admin" | "user")
+        item.role.includes(user.role as "admin" | "user"),
     );
   };
 

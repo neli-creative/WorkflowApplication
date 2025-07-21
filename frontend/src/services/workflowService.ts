@@ -1,29 +1,49 @@
-import { NodeType } from "@/components/workflow/create/Node/node.type";
 import { authService } from "./authServices/authServices";
 
-//TODO:
+import { NodeType } from "@/components/workflow/create/Node/node.type";
+
 export interface CreateWorkflowDto {
   nodes: NodeType[];
 }
-
 export interface RunWorkflowDto {
   input: string;
 }
-
 export interface RunWorkflowResponse {
   result: string;
 }
 
+export interface GetWorkflowResponse {
+  _id: string;
+  nodes: NodeType[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 const apiUrl = import.meta.env.VITE_API_URL;
 
+/**
+ * Creates a new workflow on the server.
+ *
+ * This function sends workflow data to the backend for storage and processing.
+ * It includes timeout handling to prevent hanging requests.
+ *
+ * @param {CreateWorkflowDto} workflowData - The workflow data to create
+ * @param {NodeType[]} workflowData.nodes - Array of workflow nodes
+ *
+ * @returns {Promise<void>} Resolves when workflow is successfully created
+ *
+ * @throws {Error} "Request timed out" - When request exceeds 7 seconds
+ * @throws {Error} "HTTP error! status: {status}" - When server returns error status
+ * @throws {Error} Network or authentication errors from fetchWithAuth
+ *
+ */
 export const createWorkflow = async (
-  workflowData: CreateWorkflowDto
+  workflowData: CreateWorkflowDto,
 ): Promise<void> => {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 7000); // 7s
+  const timeout = setTimeout(() => controller.abort(), 7000);
 
   try {
-    // ✅ Utilisation du service d'auth pour gérer automatiquement le refresh
     const res = await authService.fetchWithAuth(`${apiUrl}/workflow/create`, {
       method: "POST",
       headers: {
@@ -36,8 +56,8 @@ export const createWorkflow = async (
     clearTimeout(timeout);
 
     if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+      await res.json().catch(() => ({}));
+      throw new Error(`HTTP error! status: ${res.status}`);
     }
 
     return;
@@ -49,19 +69,24 @@ export const createWorkflow = async (
   }
 };
 
-export interface GetWorkflowResponse {
-  _id: string;
-  nodes: NodeType[];
-  createdAt: string;
-  updatedAt: string;
-}
-
+/**
+ * Retrieves the current user's workflow from the server.
+ *
+ * This function fetches the workflow data associated with the authenticated user.
+ * It handles the case where no workflow exists by returning null instead of throwing an error.
+ *
+ * @returns {Promise<GetWorkflowResponse | null>} The workflow data or null if no workflow exists
+ *
+ * @throws {Error} "Request timed out" - When request exceeds 7 seconds
+ * @throws {Error} "HTTP error! status: {status}" - When server returns unexpected error
+ * @throws {Error} Network or authentication errors from fetchWithAuth
+ *
+ */
 export const getWorkflow = async (): Promise<GetWorkflowResponse | null> => {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 7000); // 7s
+  const timeout = setTimeout(() => controller.abort(), 7000);
 
   try {
-    // ✅ Utilisation du service d'auth
     const res = await authService.fetchWithAuth(`${apiUrl}/workflow`, {
       method: "GET",
       headers: {
@@ -76,13 +101,13 @@ export const getWorkflow = async (): Promise<GetWorkflowResponse | null> => {
       res.status === 404 ||
       (res.status === 400 && res.statusText.includes("No workflow found"))
     ) {
-      // Aucun workflow trouvé, on retourne null
       return null;
     }
 
     if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+      await res.json().catch(() => ({}));
+
+      throw new Error(`HTTP error! status: ${res.status}`);
     }
 
     return await res.json();
@@ -94,14 +119,31 @@ export const getWorkflow = async (): Promise<GetWorkflowResponse | null> => {
   }
 };
 
+/**
+ * Executes a workflow with the provided user input.
+ *
+ * This function sends user input to the server to be processed through the workflow.
+ * It has an extended timeout (30 seconds) to accommodate potentially long-running
+ * workflow operations involving AI processing.
+ *
+ * @param {RunWorkflowDto} runData - The data needed to run the workflow
+ * @param {string} runData.input - User input to be processed by the workflow
+ *
+ * @returns {Promise<RunWorkflowResponse>} The processed result from the workflow
+ * @returns {string} result - The processed output from the workflow
+ *
+ * @throws {Error} "Request timed out" - When request exceeds 30 seconds
+ * @throws {Error} Server error messages - When workflow execution fails
+ * @throws {Error} Network or authentication errors from fetchWithAuth
+ *
+ */
 export const runWorkflow = async (
-  runData: RunWorkflowDto
+  runData: RunWorkflowDto,
 ): Promise<RunWorkflowResponse> => {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30000); // 30s pour l'exécution du workflow
+  const timeout = setTimeout(() => controller.abort(), 30000);
 
   try {
-    // ✅ Utilisation du service d'auth
     const res = await authService.fetchWithAuth(`${apiUrl}/workflow/run`, {
       method: "POST",
       headers: {
@@ -114,8 +156,9 @@ export const runWorkflow = async (
     clearTimeout(timeout);
 
     if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+      await res.json().catch(() => ({}));
+
+      throw new Error(`HTTP error! status: ${res.status}`);
     }
 
     return await res.json();

@@ -47,7 +47,7 @@ export class AuthService {
       password: hashedPassword,
       firstName,
       lastName,
-      role: role.toUpperCase(),
+      role: role,
     });
   }
 
